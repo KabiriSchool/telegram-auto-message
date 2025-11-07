@@ -9,7 +9,7 @@ API_ID = int(os.getenv("API_ID", "2040"))
 API_HASH = os.getenv("API_HASH", "b18441a1ff607e10a989891a5462e627")
 SESSION_STRING = os.getenv("SESSION_STRING", "")
 TARGET = os.getenv("TARGET", "")   # e.g. -1001234567890
-INTERVAL = int(os.getenv("INTERVAL", "180"))
+INTERVAL = int(os.getenv("INTERVAL", "200"))
 MESSAGES = os.getenv("MESSAGES").split("؛")
 JITTER = int(os.getenv("JITTER", "20"))
 PORT = int(os.getenv("PORT", "3000"))
@@ -51,3 +51,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         logging.info("Stopped")
+
