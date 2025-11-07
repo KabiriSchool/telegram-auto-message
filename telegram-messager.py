@@ -11,7 +11,7 @@ SESSION_STRING = os.getenv("SESSION_STRING", "")
 TARGET1 = os.getenv("TARGET1", "")
 TARGET2 = os.getenv("TARGET2", "")
 INTERVAL = int(os.getenv("INTERVAL", "180"))
-MESSAGES = os.getenv("MESSAGES", "سلام").split("؛")
+MESSAGES = os.getenv("MESSAGES", "یا حسین").split("؛")
 PORT = int(os.getenv("PORT", "3000"))
 
 print("DEBUG: TARGET1 =", repr(TARGET1))
@@ -60,3 +60,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
