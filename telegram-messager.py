@@ -11,7 +11,7 @@ SESSION_STRING = os.getenv("SESSION_STRING", "")
 TARGET1 = os.getenv("TARGET1", "")
 TARGET2 = os.getenv("TARGET2", "")
 INTERVAL = int(os.getenv("INTERVAL", "180"))
-MESSAGES = os.getenv("MESSAGES", "یا حسین").split("؛")
+MESSAGES = os.getenv("MESSAGES").split("؛")
 PORT = int(os.getenv("PORT", "3000"))
 
 print("DEBUG: TARGET1 =", repr(TARGET1))
@@ -24,7 +24,7 @@ async def send_loop():
     logging.info("Telegram client started.")
 
     while True:
-        msg = random.choice(MESSAGES).strip() or "سلام"
+        msg = random.choice(MESSAGES).strip() or "یا حسین"
         try:
             if TARGET1:
                 logging.info(f"Sending to {TARGET1}: {msg}")
@@ -60,4 +60,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
