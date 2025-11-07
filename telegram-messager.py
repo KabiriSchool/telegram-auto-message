@@ -1,33 +1,53 @@
-import os
-import asyncio
-from telethon import TelegramClient
+# telegram-messager.py
+import os, asyncio, random, logging
+from telethon import TelegramClient, errors
 from telethon.sessions import StringSession
-from dotenv import load_dotenv
-import random
+from aiohttp import web
 
-load_dotenv()
-
-API_ID = int(os.getenv("API_ID"))
-API_HASH = os.getenv("API_HASH")
-SESSION_STRING = os.getenv("SESSION_STRING")
-TARGET = os.getenv("TARGET")
-INTERVAL = int(os.getenv("INTERVAL", 180))
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+API_ID = int(os.getenv("API_ID", "2040"))
+API_HASH = os.getenv("API_HASH", "b18441a1ff607e10a989891a5462e627")
+SESSION_STRING = os.getenv("SESSION_STRING", "")
+TARGET = os.getenv("TARGET", "")   # e.g. -1001234567890
+INTERVAL = int(os.getenv("INTERVAL", "180"))
 MESSAGES = os.getenv("MESSAGES").split("؛")
+JITTER = int(os.getenv("JITTER", "20"))
+PORT = int(os.getenv("PORT", "3000"))
 
-client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
+client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH, connection_retries=5)
 
-async def main():
-    print("Client started successfully ✅")
+async def send_loop():
     await client.start()
-
+    logging.info("Telegram client started.")
     while True:
         try:
-            msg = random.choice(MESSAGES)
+            msg = random.choice(MESSAGES).strip() or "سلام"
+            jitter = random.randint(-JITTER, JITTER) if JITTER>0 else 0
+            wait = max(5, INTERVAL + jitter)
+            logging.info(f"Sending to {TARGET}: {msg} — next in {wait}s")
             await client.send_message(int(TARGET), msg)
-            print(f"✅ Message sent: {msg}")
+            await asyncio.sleep(wait)
+        except errors.FloodWaitError as e:
+            logging.warning(f"FloodWait {e.seconds}s")
+            await asyncio.sleep(e.seconds + 5)
         except Exception as e:
-            print("⚠️ Error sending message:", e)
-        await asyncio.sleep(INTERVAL)
+            logging.exception("Error sending — retrying after short delay")
+            await asyncio.sleep(30)
 
-with client:
-    client.loop.run_until_complete(main())
+async def keep_alive():
+    app = web.Application()
+    async def handle(req): return web.Response(text="ok")
+    app.router.add_get("/", handle)
+    runner = web.AppRunner(app); await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", PORT); await site.start()
+    logging.info(f"Keep-alive server on port {PORT}")
+
+async def main():
+    await keep_alive()
+    await send_loop()
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logging.info("Stopped")
