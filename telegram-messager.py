@@ -40,7 +40,7 @@ async def send_loop():
         except errors.FloodWaitError as e:
             logging.warning(f"FloodWait {e.seconds}s — sleeping")
             await asyncio.sleep(e.seconds + 5)
-        except Exception as e:
+        except Exception:
             logging.exception("Error sending — retrying after short delay")
             await asyncio.sleep(30)
 
