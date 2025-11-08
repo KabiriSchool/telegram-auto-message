@@ -10,7 +10,7 @@ API_HASH = os.getenv("API_HASH", "b18441a1ff607e10a989891a5462e627")
 SESSION_STRING = os.getenv("SESSION_STRING", "")
 TARGET1 = os.getenv("TARGET1", "")
 TARGET2 = os.getenv("TARGET2", "")
-INTERVAL = int(os.getenv("INTERVAL", "180"))
+INTERVAL = int(os.getenv("INTERVAL", "240"))
 MESSAGES = os.getenv("MESSAGES").split("؛")
 PORT = int(os.getenv("PORT", "3000"))
 
@@ -60,5 +60,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
